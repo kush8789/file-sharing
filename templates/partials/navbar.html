@@ -1,0 +1,22 @@
+<nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'myapp:home' %}">File sharing</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-nav"
+            aria-controls="navbar-nav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbar-nav">
+            <div class="navbar-nav">
+                {% if request.user.is_authenticated %}
+                {% if request.user.role == 1 %}
+                <a class="nav-link" href="{% url 'myapp:upload' %}">Upload</a>
+                {% endif %}
+                <a class="nav-link" href="{% url 'myapp:logout' %}">Logout</a>
+                {% else %}
+                <a class="nav-link" href="{% url 'myapp:login' %}">Login</a>
+                <a class="nav-link" href="{% url 'myapp:signup' %}">Signup</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

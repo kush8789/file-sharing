@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<style>
+    /* Your CSS styles here */
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="col-md-12">
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+
+{% if request.user.is_authenticated %}
+<div class="container d-flex flex-column flex-wrap justify-content-center align-items-center my-3">
+    <h3 class="text-center">List of Files</h3>
+
+    <table class="table table-dark table-striped" id="fileTable">
+        <thead>
+            <tr>
+                <th id="slno">File Name</th>
+                <th id="action">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card text-center" style="width: 18rem;">
+    <img src="https://via.placeholder.com/150" class="card-img-top" alt="Card Image">
+    <div class="card-body">
+        <h5 class="card-title">Card Title</h5>
+        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's
+            content.</p>
+        <a href="{% url 'myapp:login' %}" class="btn btn-primary">Login</a>
+        <a href="{% url 'myapp:signup' %}" class="btn btn-secondary">Signup</a>
+    </div>
+</div>
+
+{% endif %}
+
+<script>
+    // Fetch data from myapp:file-list endpoint using GET method
+    fetch("{% url 'myapp:file-list' %}", {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+        .then(response => response.json())
+        .then(data => {
+            // Populate the table with the fetched data
+            const tableBody = document.querySelector('#fileTable tbody');
+
+            data.forEach(file => {
+                const row = document.createElement('tr');
+                const fileNameCell = document.createElement('td');
+                fileNameCell.textContent = file.title;
+
+                const actionCell = document.createElement('td');
+                const downloadButton = document.createElement('button');
+                downloadButton.textContent = 'Download';
+                downloadButton.classList.add('btn', 'btn-success');
+                downloadButton.addEventListener('click', () => downloadFile(file.name)); // Replace 'url' with the actual URL
+
+                actionCell.appendChild(downloadButton);
+
+                row.appendChild(fileNameCell);
+                row.appendChild(actionCell);
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+
+    function downloadFile(url) {
+        // You can use the browser's download functionality or fetch the file content and create a download link
+        // For simplicity, let's open the file in a new tab for download
+
+        const downloadUrl = `http://127.0.0.1:8000/${url}`;
+        window.open(downloadUrl, '_blank');
+    }
+</script>
+
+{% endblock content %}
